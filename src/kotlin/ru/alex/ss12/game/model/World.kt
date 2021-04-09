@@ -78,4 +78,24 @@ class World {
         }
         return result
     }
+
+    fun cellOn(x: Int, y: Int) : Cell {
+        //TODO может быть что-то кроме 0 и 1
+        //Out of bounds
+        if (y > map.size || y < 0 || x > map[0].size || x < 0)
+            return Cell.WALL
+        if (map[y][x] == 1)
+            return Cell.WALL
+        return Cell.EMPTY
+    }
+
+    fun cellOn(point: Point) : Cell {
+        return cellOn(point.x, point.y)
+    }
+
+    enum class Cell {
+        WALL,
+        EMPTY
+    }
+
 }
