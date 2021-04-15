@@ -21,8 +21,9 @@ import ru.alex.ss12.response.WorldResponse
 import ru.alex.ss12.response.ItemsResponse
 import ru.alex.ss12.response.PlayersResponse
 import ru.alex.ss12.response.Response
+import java.awt.Point
 
-class Game(private val world: World) {
+class Game : World.UserRepository {
 
     private val logger = LoggerFactory.getLogger(Game::class.java)
 
@@ -31,6 +32,7 @@ class Game(private val world: World) {
 
     private var isPlayerChanged = false
     private var isItemsChanged = false
+    private val world: World = World(this)
 
     init {
         taskController.startCoolDownTask {
@@ -118,4 +120,10 @@ class Game(private val world: World) {
         }
         connections.forEach { it.key.send(text) }
     }
+
+    override fun getUsers(): Collection<Point> {
+        return connections.values.map { Point(it.x, it.y) };
+    }
+
+
 }

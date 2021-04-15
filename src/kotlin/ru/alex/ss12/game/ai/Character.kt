@@ -2,7 +2,12 @@ package ru.alex.ss12.game.ai
 
 import ru.alex.ss12.game.model.MoveDirection
 
-open class Character(val name: String, var x: Int = 1, var y: Int = 1) {
+open class Character(
+    val name: String,
+    var x: Int = 1,
+    var y: Int = 1,
+    var alive: Boolean = true
+) {
 
     @Transient
     private var isMoveEnabled = true
