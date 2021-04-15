@@ -1,11 +1,14 @@
 package ru.alex.ss12.game.model
 
 import org.slf4j.LoggerFactory
+import ru.alex.ss12.game.Game
+import ru.alex.ss12.game.ai.Terminator
 import ru.alex.ss12.model.User
 import java.awt.Point
 
-class World {
+class World (private val userRepository: UserRepository) {
     private val logger = LoggerFactory.getLogger(World::class.java)
+    val monster = Terminator(this)
 
     val map = arrayOf(
         intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -38,6 +41,16 @@ class World {
 
     init {
         items = initItems()
+    }
+
+    fun tickMonster() {
+        when (monster.makeMove().direction) {
+            MoveDirection.UP -> monster.y = monster.y - 1
+            MoveDirection.DOWN -> monster.y = monster.y + 1
+            MoveDirection.LEFT -> monster.x = monster.x - 1
+            MoveDirection.RIGHT -> monster.x = monster.x + 1
+            else -> return
+        }
     }
 
     fun moveUser(user: User, direction: MoveDirection): MoveResult {
@@ -78,4 +91,34 @@ class World {
         }
         return result
     }
+
+    fun cellOn(x: Int, y: Int) : Cell {
+        //TODO может быть что-то кроме 0 и 1
+        //Out of bounds
+        if (y > map.size || y < 0 || x > map[0].size || x < 0)
+            return Cell.WALL
+        for (user in userRepository.getUsers()){
+//            if (user.x == x && user.y == y && user.alive)
+            if (user.x == x && user.y == y)
+                return Cell.HUMAN
+        }
+        if (map[y][x] == 1)
+            return Cell.WALL
+        return Cell.EMPTY
+    }
+
+    fun cellOn(point: Point) : Cell {
+        return cellOn(point.x, point.y)
+    }
+
+    enum class Cell {
+        WALL,
+        EMPTY,
+        HUMAN
+    }
+
+    interface UserRepository {
+        fun getUsers(): Collection<Point>
+    }
+
 }

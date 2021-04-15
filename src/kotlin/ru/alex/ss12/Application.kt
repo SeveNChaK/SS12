@@ -44,7 +44,7 @@ fun Application.module() {
 
     val logger = LoggerFactory.getLogger(Application::class.java)
     val gson = GsonBuilder().create()
-    val game = Game(world = World())
+    val game = Game()
 
     routing {
         webSocket("/") {
